@@ -14,11 +14,13 @@ import { Badge } from "./ui/badge";
 import { getCategoryDesign } from "@/app/data/category-data";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import type { Post, User, Vote } from "@/generated/prisma/client";
+import { Textarea } from "./ui/textarea";
+import type { Comment, Post, User, Vote } from "@/generated/prisma/client";
 
 interface FeedbackPost extends Post {
   author: User;
   votes: Vote[];
+  comments: (Comment & { user: User })[];
 }
 
 interface FeedbackListProps {
@@ -28,6 +30,11 @@ interface FeedbackListProps {
 
 export default function FeedbackList({ initialPosts, userId }: FeedbackListProps) {
   const [posts, setPosts] = useState(initialPosts);
+  const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [submittingCommentId, setSubmittingCommentId] = useState<number | null>(
+    null,
+  );
 
   const handleVote = async (postId: number) => {
     const currentUserId = userId;
@@ -83,6 +90,75 @@ export default function FeedbackList({ initialPosts, userId }: FeedbackListProps
       toast.error("Failed to submit vote. Please try again");
     }
   };
+
+  const toggleComments = (postId: number) => {
+    setOpenComments((current) => ({
+      ...current,
+      [postId]: !current[postId],
+    }));
+  };
+
+  const handleCommentSubmit = async (postId: number) => {
+    const currentUserId = userId;
+    const content = commentInputs[postId]?.trim();
+
+    if (!currentUserId) {
+      toast.error("Please sign in to comment on feedback");
+      return;
+    }
+
+    if (!content) {
+      toast.error("Please enter a comment");
+      return;
+    }
+
+    setSubmittingCommentId(postId);
+
+    try {
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId,
+          content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Comment failed");
+      }
+
+      const comment = await response.json();
+
+      setPosts((currentPosts) =>
+        currentPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [comment, ...post.comments],
+              }
+            : post,
+        ),
+      );
+      setCommentInputs((current) => ({
+        ...current,
+        [postId]: "",
+      }));
+      setOpenComments((current) => ({
+        ...current,
+        [postId]: true,
+      }));
+      toast.success("Comment added");
+    } catch (error) {
+      console.error("Failed to submit comment.", error);
+      toast.error("Failed to submit comment. Please try again");
+    } finally {
+      setSubmittingCommentId(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {posts.map((post) => (
@@ -97,6 +173,11 @@ export default function FeedbackList({ initialPosts, userId }: FeedbackListProps
                 <CardDescription className="flex items-center gap-1.5 mt-1">
                   <UserIcon className="h-3 w-3" />
                   {post.author.name}
+                  {post.author.role === "admin" && (
+                    <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                      Admin
+                    </Badge>
+                  )}
                   <span>|</span>
                   <span className="whitespace-nowrap">
                     {formatDistanceToNow(new Date(post.created_at), {
@@ -143,26 +224,97 @@ export default function FeedbackList({ initialPosts, userId }: FeedbackListProps
           <CardContent>
             <p className="text-muted-foreground mb-3">{post.description}</p>
             <div className="flex items-center justify-between">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleVote(post.id)}
-                className="gap-2"
-              >
-                <ThumbsUp
-                  className={`h-4 w-4 ${
-                    post.votes.some((v) => v.userId === userId)
-                      ? "fill-current"
-                      : ""
-                  }`}
-                />
-                {post.votes.length} Votes
-              </Button>
-              <div className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
-                <MessageSquare className="h-4 w-4" />
-                Comment
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleVote(post.id)}
+                  className="gap-2"
+                >
+                  <ThumbsUp
+                    className={`h-4 w-4 ${
+                      post.votes.some((v) => v.userId === userId)
+                        ? "fill-current"
+                        : ""
+                    }`}
+                  />
+                  {post.votes.length} Votes
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleComments(post.id)}
+                  className="gap-2"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  {post.comments.length} Comments
+                </Button>
               </div>
             </div>
+            {openComments[post.id] && (
+              <div className="mt-4 space-y-3 border-t pt-4">
+                <div className="space-y-2">
+                  <Textarea
+                    value={commentInputs[post.id] ?? ""}
+                    onChange={(event) =>
+                      setCommentInputs((current) => ({
+                        ...current,
+                        [post.id]: event.target.value,
+                      }))
+                    }
+                    placeholder="Add your comment..."
+                    className="min-h-20"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      size="sm"
+                      onClick={() => handleCommentSubmit(post.id)}
+                      disabled={submittingCommentId === post.id}
+                    >
+                      {submittingCommentId === post.id
+                        ? "Submitting"
+                        : "Submit"}
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {post.comments.length > 0 ? (
+                    post.comments.map((comment) => (
+                      <div
+                        key={comment.id}
+                        className="rounded-lg border bg-muted/30 p-3"
+                      >
+                        <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{comment.user.name}</span>
+                          {comment.user.role === "admin" && (
+                            <Badge
+                              variant="secondary"
+                              className="px-1.5 py-0 text-[10px]"
+                            >
+                              Admin
+                            </Badge>
+                          )}
+                          <span>|</span>
+                          <span>
+                            {formatDistanceToNow(
+                              new Date(comment.created_at),
+                              {
+                                addSuffix: true,
+                              },
+                            )}
+                          </span>
+                        </div>
+                        <p className="text-sm">{comment.content}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No comments yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

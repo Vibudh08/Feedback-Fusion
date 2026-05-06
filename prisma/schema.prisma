@@ -20,6 +20,7 @@ model User {
   image         String
   posts         Post[]
   votes         Vote[]
+  comments      Comment[]
   role          Role @default(user)
 
   @@map("users")
@@ -34,10 +35,23 @@ model Post {
   author        User    @relation(fields: [authorId], references: [id])
   authorId      Int
   votes         Vote[]
+  comments      Comment[]
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
 
   @@map("posts")
+}
+
+model Comment {
+    id          Int @id @default(autoincrement())
+    content     String
+    userId      Int
+    user        User @relation(fields: [userId], references: [id])
+    postId      Int
+    post        Post @relation(fields: [postId],references: [id])
+    created_at  DateTime @default(now())
+
+    @@map("comments")
 }
 
 model Vote {

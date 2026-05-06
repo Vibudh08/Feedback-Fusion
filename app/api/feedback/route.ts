@@ -35,7 +35,15 @@ export async function GET() {
     const posts = await prisma.post.findMany({
       include: {
         author: true,
-        votes: true
+        votes: true,
+        comments: {
+          include: {
+            user: true,
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+        },
       },
       orderBy: {
         created_at: "desc",

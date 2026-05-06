@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: number }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const User = await syncCurrentUser();

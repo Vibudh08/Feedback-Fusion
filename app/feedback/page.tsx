@@ -23,6 +23,14 @@ export default async function FeedbackPage() {
     include: {
       author: true,
       votes: true,
+      comments: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+      },
     },
     orderBy: {
       created_at: "desc",
