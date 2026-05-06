@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import { syncCurrentUser } from "@/lib/sync-user";
 import {
-  ArrowRight,
   BarChart,
   Map,
   MessageSquare,
@@ -30,7 +29,7 @@ export default async function HomePage() {
         title="Shape the future of our product"
         subtitle="Feedback Fusion is where your ideas come to life. Suggest features, vote on what matters most, and follow our public roadmap."
       >
-        <div className="flex gap-4 justify-center pt-4">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-center sm:gap-4">
           <Button
             asChild
             size="lg"
@@ -44,14 +43,17 @@ export default async function HomePage() {
             className="bg-white text-black hover:bg-gray-100"
           >
             <Link href="/roadmap">
-              View Roadmap <Map className="ml-2 h-4 w-4" />
+              <Map className=" h-4 w-4" />
+              View Roadmap
             </Link>
           </Button>
         </div>
       </GradientHeader>
       {/* Feature Section */}
       <section>
-        <h2 className="text-3xl font-bond text-center mb-8">How It Works</h2>
+        <h2 className="mb-8 text-center text-2xl font-bond sm:text-3xl">
+          How It Works
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader>
@@ -102,18 +104,24 @@ export default async function HomePage() {
       </section>
       {/* Stats Section */}
       <section className="text-center">
-        <div className="inline-grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-3 gap-3 sm:inline-grid sm:gap-8">
           <div>
-            <div className="text-3xl font-bold">{commentNum}</div>
-            <div className="text-muted-foreground">Suggestions</div>
+            <div className="text-xl font-bold sm:text-3xl">{commentNum}</div>
+            <div className="text-xs text-muted-foreground sm:text-base">
+              Suggestions
+            </div>
           </div>
           <div>
-            <div className="text-3xl font-bold">{votesNum}</div>
-            <div className="text-muted-foreground">Votes Cast</div>
+            <div className="text-xl font-bold sm:text-3xl">{votesNum}</div>
+            <div className="text-xs text-muted-foreground sm:text-base">
+              Votes Cast
+            </div>
           </div>
           <div>
-            <div className="text-3xl font-bold">{feedbackNum}</div>
-            <div className="text-muted-foreground">Features Shipped</div>
+            <div className="text-xl font-bold sm:text-3xl">{feedbackNum}</div>
+            <div className="text-xs text-muted-foreground sm:text-base">
+              Features Shipped
+            </div>
           </div>
         </div>
       </section>

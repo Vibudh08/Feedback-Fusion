@@ -182,10 +182,10 @@ export default function FeedbackList({
           className="hover:shadow-md transition-shadow border"
         >
           <CardHeader>
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex-1 min-w-0">
                 <CardTitle className="text-lg">{post.title}</CardTitle>
-                <CardDescription className="flex items-center gap-1.5 mt-1">
+                <CardDescription className="mt-1 flex flex-wrap items-center gap-1.5">
                   <UserIcon className="h-3 w-3" />
                   {post.author.name}
                   {post.author.role === "admin" && (
@@ -201,7 +201,7 @@ export default function FeedbackList({
                   </span>
                 </CardDescription>
               </div>
-              <div className="flex gap-1.5">
+              <div className="flex flex-wrap gap-1.5">
                 {/* Status Badge */}
                 {(() => {
                   const statusGroup =
@@ -239,12 +239,12 @@ export default function FeedbackList({
           <CardContent>
             <p className="text-muted-foreground mb-3">{post.description}</p>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleVote(post.id)}
-                  className="gap-2"
+                  className="w-full gap-2 sm:w-auto"
                 >
                   <ThumbsUp
                     className={`h-4 w-4 ${
@@ -259,7 +259,7 @@ export default function FeedbackList({
                   variant="outline"
                   size="sm"
                   onClick={() => toggleComments(post.id)}
-                  className="gap-2"
+                  className="w-full gap-2 sm:w-auto"
                 >
                   <MessageSquare className="h-4 w-4" />
                   {post.comments.length} Comments
@@ -299,7 +299,7 @@ export default function FeedbackList({
                         key={comment.id}
                         className="rounded-lg border bg-muted/30 p-3"
                       >
-                        <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                           <span>{comment.user.name}</span>
                           {comment.user.role === "admin" && (
                             <Badge

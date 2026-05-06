@@ -83,13 +83,13 @@ export default function NewFeedbackPage() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold"> Share your feedback</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl"> Share your feedback</h1>
       </div>
       <Card>
         <CardHeader>
           <CardTitle>New Feedback</CardTitle>
           <CardDescription>
-            Share your idea with the community. Be specific about what you'd
+            Share your idea with the community. Be specific about what you&apos;d
             like to see.
           </CardDescription>
         </CardHeader>
@@ -129,11 +129,20 @@ export default function NewFeedbackPage() {
                 required
               />
             </div>
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isPending}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full sm:w-auto"
+              >
                 {isPending ? "Submitting" : "Submit Feedback"}
               </Button>
-              <Button type="button" variant="outline" asChild>
+              <Button
+                type="button"
+                variant="outline"
+                asChild
+                className="w-full sm:w-auto"
+              >
                 <Link href="/feedback">Cancel</Link>
               </Button>
             </div>

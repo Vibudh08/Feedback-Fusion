@@ -60,13 +60,13 @@ export default function FeedbackPageContent({
                         : "hover:bg-muted/50"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
                       <div
-                        className={`p-2 rounded-lg ${design.light} ${design.border} border`}
+                        className={`shrink-0 p-2 rounded-lg ${design.light} ${design.border} border`}
                       >
                         <Icon className={`h-4 w-4 ${design.text}`} />
                       </div>
-                      <span className="font-medium text-sm">
+                      <span className="truncate text-sm font-medium">
                         {cat.category}
                       </span>
                     </div>

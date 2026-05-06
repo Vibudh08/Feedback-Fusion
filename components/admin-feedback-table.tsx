@@ -96,7 +96,8 @@ export default function AdminFeedbackTable({ posts }: { posts: any[] }) {
         <CardTitle>Manage Feedback</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
+        <div className="overflow-x-auto">
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
@@ -239,6 +240,7 @@ export default function AdminFeedbackTable({ posts }: { posts: any[] }) {
             })}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   );

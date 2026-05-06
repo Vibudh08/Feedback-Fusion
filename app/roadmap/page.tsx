@@ -125,30 +125,36 @@ export default async function RoadmapPage() {
             </div>
             <Progress value={completedPercentage} className="h-2" />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="text-xl font-bold text-yellow-600 sm:text-2xl dark:text-yellow-400">
                 {inProgressPercentage}%
               </div>
-              <div className="text-sm text-muted-foreground">In Progress</div>
+              <div className="text-xs text-muted-foreground sm:text-sm">
+                In Progress
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <div className="text-xl font-bold text-blue-600 sm:text-2xl dark:text-blue-400">
                 {plannedPercentage}%
               </div>
-              <div className="text-sm text-muted-foreground">Planned</div>
+              <div className="text-xs text-muted-foreground sm:text-sm">
+                Planned
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-xl font-bold text-green-600 sm:text-2xl dark:text-green-400">
                 {completedPercentage}%
               </div>
-              <div className="text-sm text-muted-foreground">Completed</div>
+              <div className="text-xs text-muted-foreground sm:text-sm">
+                Completed
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
       {/* Roadmap Columns */}
-      <div className="lg:grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         {STATUS_ORDER.map((status) => {
           const group = STATUS_GROUPS[status as keyof typeof STATUS_GROUPS];
           const Icon = group.icon;
@@ -190,7 +196,7 @@ export default async function RoadmapPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pb-3">
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <Badge variant="outline" className="text-xs">
                           {post.category}
                         </Badge>
