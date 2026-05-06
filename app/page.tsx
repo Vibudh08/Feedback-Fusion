@@ -2,6 +2,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import NewFeedbackButton from "@/components/new-feedback-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import prisma from "@/lib/prisma";
 import { syncCurrentUser } from "@/lib/sync-user";
 import {
   ArrowRight,
@@ -15,6 +16,13 @@ import Link from "next/link";
 
 export default async function HomePage() {
   const dbUser =await syncCurrentUser();
+  const commentNum =  (await prisma.comment.findMany()).length;
+  const votesNum =  (await prisma.vote.findMany()).length;
+  const feedbackNum =  (await prisma.post.findMany()).length;
+  console.log("comment", commentNum)
+  console.log("vote", votesNum)
+  console.log("feedback", feedbackNum);
+
   return (
     <div className="space-y-12">
       {/* Hero Section */}
@@ -96,15 +104,15 @@ export default async function HomePage() {
       <section className="text-center">
         <div className="inline-grid grid-cols-3 gap-8">
           <div>
-            <div className="text-3xl font-bold">1,234+</div>
+            <div className="text-3xl font-bold">{commentNum}</div>
             <div className="text-muted-foreground">Suggestions</div>
           </div>
           <div>
-            <div className="text-3xl font-bold">8,901+</div>
+            <div className="text-3xl font-bold">{votesNum}</div>
             <div className="text-muted-foreground">Votes Cast</div>
           </div>
           <div>
-            <div className="text-3xl font-bold">254+</div>
+            <div className="text-3xl font-bold">{feedbackNum}</div>
             <div className="text-muted-foreground">Features Shipped</div>
           </div>
         </div>

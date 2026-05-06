@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { Textarea } from "./ui/textarea";
 import type { Comment, Post, User, Vote } from "@/generated/prisma/client";
 
-interface FeedbackPost extends Post {
+export interface FeedbackPost extends Post {
   author: User;
   votes: Vote[];
   comments: (Comment & { user: User })[];
@@ -26,10 +26,18 @@ interface FeedbackPost extends Post {
 interface FeedbackListProps {
   initialPosts: FeedbackPost[];
   userId: number | null;
+  categoryFilter?: string | null;
 }
 
-export default function FeedbackList({ initialPosts, userId }: FeedbackListProps) {
+export default function FeedbackList({
+  initialPosts,
+  userId,
+  categoryFilter = null,
+}: FeedbackListProps) {
   const [posts, setPosts] = useState(initialPosts);
+  const visiblePosts = categoryFilter
+    ? posts.filter((post) => post.category === categoryFilter)
+    : posts;
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
   const [submittingCommentId, setSubmittingCommentId] = useState<number | null>(
@@ -161,7 +169,14 @@ export default function FeedbackList({ initialPosts, userId }: FeedbackListProps
 
   return (
     <div className="space-y-4">
-      {posts.map((post) => (
+      {visiblePosts.length === 0 && (
+        <Card>
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">
+            No feedback found for this category.
+          </CardContent>
+        </Card>
+      )}
+      {visiblePosts.map((post) => (
         <Card
           key={post.id}
           className="hover:shadow-md transition-shadow border"

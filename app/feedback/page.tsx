@@ -1,20 +1,11 @@
 import { GradientHeader } from "@/components/gradient-header";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import { syncCurrentUser } from "@/lib/sync-user";
-import { PlusIcon, Map } from "lucide-react";
+import { Map } from "lucide-react";
 import Link from "next/link";
-import { getCategoryDesign } from "../data/category-data";
-import { Badge } from "@/components/ui/badge";
-import FeedbackList from "@/components/feedback-list";
 import NewFeedbackButton from "@/components/new-feedback-button";
+import FeedbackPageContent from "@/components/feedback-page-content";
 
 export default async function FeedbackPage() {
   const dbUser = await syncCurrentUser();
@@ -69,53 +60,11 @@ export default async function FeedbackPage() {
           </div>
         </GradientHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Categories</CardTitle>
-                <CardDescription>Browse feedback by category</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {categories.map((cat) => {
-                    const design = getCategoryDesign(cat.category);
-                    const Icon = design.icon;
-
-                    return (
-                      <div
-                        key={cat.category}
-                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`p-2 rounded-lg ${design.light} ${design.border} border`}
-                          >
-                            <Icon className={`h-4 w-4 ${design.text}`}></Icon>
-                          </div>
-                          <span className="font-medium text-sm">
-                            {cat.category}
-                          </span>
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={`${design.light} ${design.text}`}
-                        >
-                          {cat._count}
-                        </Badge>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <FeedbackList initialPosts={posts} userId={dbUser?.id ?? null} />
-          </div>
-        </div>
+        <FeedbackPageContent
+          categories={categories}
+          posts={posts}
+          userId={dbUser?.id ?? null}
+        />
       </div>
     </>
   );
