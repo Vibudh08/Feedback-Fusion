@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "./prisma";
+import { unstable_rethrow } from "next/navigation";
 
 export const syncCurrentUser = async () => {
   try {
@@ -85,6 +86,7 @@ export const syncCurrentUser = async () => {
 
     return dbUser;
   } catch (error) {
+    unstable_rethrow(error);
     console.error("Error syncing user from clerk:", error);
     throw error;
   }
